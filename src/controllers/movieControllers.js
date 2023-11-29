@@ -31,6 +31,24 @@ const getMovies = (req, res) => {
   res.json(movies);
 };
 
+const postMovie = (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+
+  database
+    .query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [title, director, year, color, duration]
+    )
+    .then(([result]) => {
+      res.status(201).send({id: result.insertId});
+    })
+
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -52,4 +70,5 @@ const getMovieById = (req, res) => {
 module.exports = {
   getMovies,
   getMovieById,
+  postMovie,
 };
