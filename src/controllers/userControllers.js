@@ -1,24 +1,4 @@
 const database = require("../../database");
-// afterAll(() => database.end());
-
-/*const getUsers = app.get("/api/users", (req, res) => {
-  res.json(users)
-})*/
-const postUsers = (req, res) => {
-  const { firstname, lastname, email, city, language } = req.body;
-  database
-    .query(
-      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-      [firstname, lastname, email, city, language]
-    )
-    .then(([result]) => {
-      res.status(201).send({id: result.insertId});
-    })
-    .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
-    });
-};
 
 const getUsers = (req, res) => {
   database
@@ -33,16 +13,42 @@ const getUsers = (req, res) => {
     });
 };
 
-/*const getUsersById = app.get("/api/users/:id", (req, res) => {
-  const wantedId = parseInt(req.params.id);
-  
-  const user = users.find((user) => user.id === wantedId);
-  if (user != null) {
-    res.json(user);
-  } else {
-    res.sendStatus(404);
-  }
-});*/
+const postUsers = (req, res) => {
+  const { firstname, lastname, email, city, language } = req.body;
+  database
+    .query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [firstname, lastname, email, city, language]
+    )
+    .then(([result]) => {
+      res.status(201).send({ id: result.insertId });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
+const updateUsers = (req, res) => {
+  const id = parseInt(req.params.id);
+  const { firstname, lastname, email, city, language } = req.body;
+  database
+    .query(
+      "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
+      [firstname, lastname, email, city, language, id]
+    )
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.sendStatus(404);
+      } else {
+        res.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
 
 const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
@@ -67,4 +73,5 @@ module.exports = {
   getUsers,
   getUsersById,
   postUsers,
+  updateUsers,
 };
