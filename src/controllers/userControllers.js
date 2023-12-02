@@ -34,7 +34,7 @@ const updateUsers = (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;
   database
     .query(
-      "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
+      "UPDATE users SET firstname = ?, lastname = ?, email = ?, city = ?, language = ? WHERE id = ?",
       [firstname, lastname, email, city, language, id]
     )
     .then(([result]) => {
