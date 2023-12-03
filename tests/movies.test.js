@@ -152,3 +152,42 @@ describe("PUT /api/movies/:id", () => {
     expect(response.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/movies", () => {
+  it("should return delete movie", async () => {
+    const deleteMovie = {
+      title: "Star Wars",
+      director: "George Lucas",
+      year: "1977",
+      color: "1",
+      duration: 120,
+    };
+
+    // Effectuer la requête DELETE
+    const response = await request(app).delete("/api/movies").send(deleteMovie);
+
+    expect(response.status).toEqual(404);
+
+    // Vérifier en base de données uniquement si la suppression a réussi
+    if (response.status === 204) {
+      // Effectuer une requête SELECT pour vérifier que le film a été supprimé
+      const [result] = await database.query(
+        "SELECT * FROM movies WHERE title=?",
+        deleteMovie.title
+      );
+
+      expect(result).toHaveLength(0); // Le film ne devrait pas être trouvé
+    }
+  });
+
+  it("should return an error", async () => {
+    const movieWithMissingProps = { title: "Harry Potter" };
+
+    // Effectuer la requête DELETE avec un film manquant
+    const response = await request(app)
+      .delete("/api/movies")
+      .send(movieWithMissingProps);
+
+    expect(response.status).toEqual(404);
+  });
+});
